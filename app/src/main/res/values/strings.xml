@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">SmarTeleprompter</string>
 
-    <!--Room strings-->
+    <!--Main page strings-->
+    <string name="main_edittext_search">Enter a title here to search</string>
+    <string name="main_sort_date">Date</string>
+    <string name="main_sort_name">Name</string>
+    <string-array name="main_spinner_items">
+        <item>@string/main_sort_date</item>
+        <item>@string/main_sort_name</item>
+    </string-array>
+
+
+
 </resources>
