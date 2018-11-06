@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "316552468888",
+    "firebase_url": "https://smarteleprompter.firebaseio.com",
+    "project_id": "smarteleprompter",
+    "storage_bucket": "smarteleprompter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316552468888:android:c72ac3965c51b509",
+        "android_client_info": {
+          "package_name": "com.fancystachestudios.smarteleprompter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316552468888-4onl3u1a6h6cnpkercdgjaj9ji3i6v6p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKfHCUSaxo31VzD15cHwu4KWQDT9sAkqM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
