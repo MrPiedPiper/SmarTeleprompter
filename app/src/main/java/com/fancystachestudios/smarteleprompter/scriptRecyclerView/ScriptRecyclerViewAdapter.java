@@ -1,5 +1,6 @@
 package com.fancystachestudios.smarteleprompter.scriptRecyclerView;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
@@ -26,6 +27,8 @@ import java.util.Comparator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecyclerViewAdapter.ViewHolder>{
 
     private Context context;
@@ -33,10 +36,19 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     ScriptSearchLoader scriptSearchLoader;
     LoaderManager loaderManager;
 
+    String selectedTheme;
+    String lightThemeValue;
+    String darkThemeValue;
+
     public ScriptRecyclerViewAdapter(Context context, LoaderManager loaderManager, ArrayList<Script> data){
         this.context = context;
         this.loaderManager = loaderManager;
         this.data = data;
+
+        SharedPreferences themeSharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
+        selectedTheme = themeSharedPreferences.getString(context.getString(R.string.shared_pref_settings_theme_key), "");
+        lightThemeValue = context.getString(R.string.settings_theme_light);
+        darkThemeValue = context.getString(R.string.settings_theme_dark);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -65,6 +77,12 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         holder.titleText.setText(currScript.getTitle());
         DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy hh:mm:ss");
         holder.dateTimeText.setText(dateFormat.format(currScript.getDate()));
+
+        if(selectedTheme.equals(lightThemeValue)){
+            holder.menuButton.setImageResource(R.drawable.baseline_more_vert_black_24);
+        }else if(selectedTheme.equals(darkThemeValue)){
+            holder.menuButton.setImageResource(R.drawable.baseline_more_vert_white_24);
+        }
     }
 
 

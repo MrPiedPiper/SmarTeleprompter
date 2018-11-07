@@ -40,5 +40,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_more_vert_black_36" />
+        app:srcCompat="@drawable/baseline_more_vert_black_24" />
 </android.support.constraint.ConstraintLayout>

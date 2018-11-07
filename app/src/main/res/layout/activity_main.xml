@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:id="@+id/main_layout">
 
     <LinearLayout
         android:elevation="4dp"
@@ -23,7 +24,8 @@
             android:id="@+id/main_edittext_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/main_edittext_search" />
+            android:hint="@string/main_edittext_search"
+            android:inputType="text" />
 
         <Spinner
             android:id="@+id/main_spinner_sort"
@@ -54,7 +56,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resume Script" />
+            android:text="@string/main_resume_button" />
     </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton

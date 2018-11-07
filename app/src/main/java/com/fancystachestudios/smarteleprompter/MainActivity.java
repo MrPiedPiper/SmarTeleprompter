@@ -1,7 +1,8 @@
 package com.fancystachestudios.smarteleprompter;
 
-import android.app.LoaderManager;
-import android.content.Loader;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -47,6 +50,9 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.main_recyclerview_scripts)
     RecyclerView recyclerView;
 
+    @BindView(R.id.main_layout)
+    ConstraintLayout mainLayout;
+
     ScriptRecyclerViewAdapter adapter;
 
     String selectedSort;
@@ -60,6 +66,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+        applyTheme();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -104,7 +111,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                scriptSearchLoader.searchForTitle(testData, charSequence.toString());
+                adapter.searchForTitle(charSequence.toString());
             }
 
             @Override
@@ -132,5 +139,34 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void searchComplete(ArrayList<Script> searchResults) {
         adapter.updateData(searchResults);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == R.id.main_menu_settings){
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
+        return true;
+    }
+
+    private void applyTheme(){
+        SharedPreferences themeSharedPreferences = getSharedPreferences(getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
+        String selectedTheme = themeSharedPreferences.getString(getString(R.string.shared_pref_settings_theme_key), "");
+        String lightThemeValue = getString(R.string.settings_theme_light);
+        String darkThemeValue = getString(R.string.settings_theme_dark);
+        if(selectedTheme.equals(lightThemeValue)){
+            setTheme(R.style.AppThemeLight);
+        }else if(selectedTheme.equals(darkThemeValue)){
+            setTheme(R.style.AppThemeDark);
+        }
     }
 }

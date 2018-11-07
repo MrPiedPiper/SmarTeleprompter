@@ -5,16 +5,41 @@
     <string name="main_edittext_search">Enter a title here to search</string>
     <string name="main_sort_date">Date</string>
     <string name="main_sort_name">Name</string>
-    <string name="default_scroll_speed">130</string>
-    <string name="default_font_size">14sp</string>
     <string-array name="main_spinner_items">
         <item>@string/main_sort_date</item>
         <item>@string/main_sort_name</item>
     </string-array>
+    <string name="main_resume_button">Resume Script</string>
+
+    <!--Menu-->
+    <string name="main_menu_settings">Settings</string>
 
     <!--Loader-->
     <string name="loader_search_title_key">loader_search_title_key</string>
     <string name="loader_search_list_key">loader_search_list_key</string>
+
+    <!--Settings-->
+    <string name="settings_theme">Theme (Restarts app)</string>
+    <string name="settings_scroll_speed">Default Scroll Speed</string>
+    <string name="settings_wpm">WPM</string>
+    <string name="settings_font_size">Default Font Size</string>
+    <string name="settings_pt">pt</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string-array name="settings_spinner_theme">
+        <item>@string/settings_theme_light</item>
+        <item>@string/settings_theme_dark</item>
+    </string-array>
+
+    <!--Defaults-->
+    <string name="default_scroll_speed">130</string>
+    <string name="default_font_size">14</string>
+
+    <!--SharedPreferences-->
+    <string name="shared_pref_settings_key">SmarTeleprompterSharedPreferencesSettingsKey</string>
+    <string name="shared_pref_settings_theme_key">SmarTeleprompterSharedPreferencesSettingsThemeKey</string>
+    <string name="shared_pref_settings_scroll_speed_key">SmarTeleprompterSharedPreferencesSettingsScrollSpeedKey</string>
+    <string name="shared_pref_settings_font_size_key">SmarTeleprompterSharedPreferencesSettingsFontSizeKey</string>
 
 
 </resources>
