@@ -3,6 +3,8 @@ package com.fancystachestudios.smarteleprompter.customClasses;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 /**
@@ -12,7 +14,7 @@ import android.support.annotation.NonNull;
  */
 
 @Entity(tableName = "script_table")
-public class Script {
+public class Script implements Parcelable{
 
     @PrimaryKey
     @NonNull
@@ -50,6 +52,56 @@ public class Script {
         this.title = title;
         this.date = date;
     }
+
+    protected Script(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        title = in.readString();
+        if (in.readByte() == 0) {
+            date = null;
+        } else {
+            date = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            scrollSpeed = null;
+        } else {
+            scrollSpeed = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            fontSize = null;
+        } else {
+            fontSize = in.readLong();
+        }
+        byte tmpEnableWaitTags = in.readByte();
+        enableWaitTags = tmpEnableWaitTags == 0 ? null : tmpEnableWaitTags == 1;
+        byte tmpEnableSmartScroll = in.readByte();
+        enableSmartScroll = tmpEnableSmartScroll == 0 ? null : tmpEnableSmartScroll == 1;
+        if (in.readByte() == 0) {
+            smartScrollInterval = null;
+        } else {
+            smartScrollInterval = in.readLong();
+        }
+        if (in.readByte() == 0) {
+            smartScrollKeyframes = null;
+        } else {
+            smartScrollKeyframes = in.readLong();
+        }
+    }
+
+    public static final Creator<Script> CREATOR = new Creator<Script>() {
+        @Override
+        public Script createFromParcel(Parcel in) {
+            return new Script(in);
+        }
+
+        @Override
+        public Script[] newArray(int size) {
+            return new Script[size];
+        }
+    };
 
     @NonNull
     public Long getId() {
@@ -124,5 +176,53 @@ public class Script {
 
     public void setSmartScrollKeyframes(Long smartScrollKeyframes) {
         this.smartScrollKeyframes = smartScrollKeyframes;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(id);
+        }
+        parcel.writeString(title);
+        if (date == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(date);
+        }
+        if (scrollSpeed == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(scrollSpeed);
+        }
+        if (fontSize == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(fontSize);
+        }
+        parcel.writeByte((byte) (enableWaitTags == null ? 0 : enableWaitTags ? 1 : 2));
+        parcel.writeByte((byte) (enableSmartScroll == null ? 0 : enableSmartScroll ? 1 : 2));
+        if (smartScrollInterval == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(smartScrollInterval);
+        }
+        if (smartScrollKeyframes == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(smartScrollKeyframes);
+        }
     }
 }
