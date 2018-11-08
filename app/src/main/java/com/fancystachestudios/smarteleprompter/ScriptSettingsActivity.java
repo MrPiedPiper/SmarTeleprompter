@@ -1,5 +1,8 @@
 package com.fancystachestudios.smarteleprompter;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -8,23 +11,30 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ScriptSettingsActivity extends AppCompatActivity {
+
+    Context context;
 
     @BindView(R.id.script_settings_title_edittext)
     EditText titleEditText;
@@ -65,12 +75,16 @@ public class ScriptSettingsActivity extends AppCompatActivity {
 
     Script passedScript;
 
+    Calendar calendar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyTheme();
         setContentView(R.layout.activity_script_settings);
         ButterKnife.bind(this);
+
+        context = this;
 
         scriptRoomDatabase = ScriptSingleton.getInstance(this);
 
@@ -98,13 +112,66 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                 }
             });
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             originalDateTextView.setText(String.format(getString(R.string.script_settings_original_date_dynamic), dateFormat.format(new Date(passedScript.getOriginalDate()))));
             currentDateTextView.setText(String.format(getString(R.string.script_settings_current_date_dynamic), dateFormat.format(new Date(passedScript.getDate()))));
+            final DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                    Calendar todayCalendar = Calendar.getInstance();
+                    todayCalendar.set(
+                            datePicker.getYear(),
+                            datePicker.getMonth(),
+                            datePicker.getDayOfMonth()
+                    );
+                    passedScript.setDate(todayCalendar.getTime().getTime());
+                    calendar.setTime(new Date(passedScript.getDate()));
 
-            SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+                    originalDateTextView.setText(String.format(getString(R.string.script_settings_original_date_dynamic), dateFormat.format(new Date(passedScript.getOriginalDate()))));
+                    currentDateTextView.setText(String.format(getString(R.string.script_settings_current_date_dynamic), dateFormat.format(new Date(passedScript.getDate()))));
+
+                    updateScript();
+                }
+            };
+            //Date Picker dialog created referencing answer by "Android_coder" edited by "talz" at https://stackoverflow.com/questions/14933330/datepicker-how-to-popup-datepicker-when-click-on-edittext
+            calendar = Calendar.getInstance();
+            calendar.setTime(new Date(passedScript.getDate()));
+            dateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new DatePickerDialog(context, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+            });
+
+            final SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
             originalTimeTextView.setText(String.format(getString(R.string.script_settings_original_time_dynamic), timeFormat.format(new Date(passedScript.getOriginalDate()))));
             currentTimeTextView.setText(String.format(getString(R.string.script_settings_current_time_dynamic), timeFormat.format(new Date(passedScript.getDate()))));
+            final TimePickerDialog.OnTimeSetListener timeSetListener = new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker timePicker, int i, int i1) {
+                    int hour = timePicker.getHour();
+                    int minute = timePicker.getMinute();
+                    calendar.setTime(new Date(passedScript.getDate()));
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, minute);
+
+                    passedScript.setDate(calendar.getTime().getTime());
+
+                    originalTimeTextView.setText(String.format(getString(R.string.script_settings_original_time_dynamic), timeFormat.format(new Date(passedScript.getOriginalDate()))));
+                    currentTimeTextView.setText(String.format(getString(R.string.script_settings_current_time_dynamic), timeFormat.format(new Date(passedScript.getDate()))));
+
+                    updateScript();
+                }
+            };
+            //Date Picker dialog created referencing answer by "Android_coder" edited by "talz" at https://stackoverflow.com/questions/14933330/datepicker-how-to-popup-datepicker-when-click-on-edittext
+            calendar = Calendar.getInstance();
+            calendar.setTime(new Date(passedScript.getDate()));
+            timeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new TimePickerDialog(context, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
+                }
+            });
 
             if(passedScript.getScrollSpeed() != null && passedScript.getScrollSpeed() != 0){
                 scrollSpeedEditText.setText(String.valueOf(passedScript.getScrollSpeed()));
@@ -186,7 +253,7 @@ public class ScriptSettingsActivity extends AppCompatActivity {
 
         }
     }
-    
+
     private void updateScript(){
         AsyncTask.execute(new Runnable() {
             @Override
