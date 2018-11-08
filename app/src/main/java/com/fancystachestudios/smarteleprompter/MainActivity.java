@@ -89,14 +89,14 @@ public class MainActivity extends AppCompatActivity
 
         final Date date = new Date();
         final ArrayList<Script> testData = new ArrayList<>();
-        testData.add(new Script(date.getTime(), "test1", date.getTime()));
-        testData.add(new Script(date.getTime()+1000, "btest2", date.getTime()+1000));
-        testData.add(new Script(date.getTime()+2000, "ftest3", date.getTime()+2000));
-        testData.add(new Script(date.getTime()+3000, "atest4", date.getTime()+3000));
-        testData.add(new Script(date.getTime()+4000, "gtest5", date.getTime()+4000));
-        testData.add(new Script(date.getTime()+5000, "dtest6", date.getTime()+5000));
-        testData.add(new Script(date.getTime()+6000, "ctest7", date.getTime()+6000));
-        testData.add(new Script(date.getTime()+7000, "etest8", date.getTime()+7000));
+        testData.add(new Script(date.getTime(), "test1", date.getTime(), date.getTime()));
+        testData.add(new Script(date.getTime()+1000, "btest2", date.getTime()+1000, date.getTime()+1000));
+        testData.add(new Script(date.getTime()+2000, "ftest3", date.getTime()+2000, date.getTime()+2000));
+        testData.add(new Script(date.getTime()+3000, "atest4", date.getTime()+3000, date.getTime()+3000));
+        testData.add(new Script(date.getTime()+4000, "gtest5", date.getTime()+4000, date.getTime()+4000));
+        testData.add(new Script(date.getTime()+5000, "dtest6", date.getTime()+5000, date.getTime()+5000));
+        testData.add(new Script(date.getTime()+6000, "ctest7", date.getTime()+6000, date.getTime()+6000));
+        testData.add(new Script(date.getTime()+7000, "etest8", date.getTime()+7000, date.getTime()+7000));
 
         adapter = new ScriptRecyclerViewAdapter(this, getSupportLoaderManager(), testData);
         recyclerView.setAdapter(adapter);

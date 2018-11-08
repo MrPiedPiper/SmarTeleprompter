@@ -26,6 +26,10 @@ public class Script implements Parcelable{
     private String title;
 
     @NonNull
+    @ColumnInfo(name = "original_date")
+    private Long originalDate;
+
+    @NonNull
     @ColumnInfo(name = "date")
     private Long date;
 
@@ -47,9 +51,10 @@ public class Script implements Parcelable{
     @ColumnInfo(name = "smart_scroll_keyframes")
     private Long smartScrollKeyframes;
 
-    public Script(@NonNull Long id, @NonNull String title, @NonNull Long date) {
+    public Script(@NonNull Long id, @NonNull String title, @NonNull Long originalDate, @NonNull Long date) {
         this.id = id;
         this.title = title;
+        this.originalDate = originalDate;
         this.date = date;
     }
 
@@ -60,6 +65,11 @@ public class Script implements Parcelable{
             id = in.readLong();
         }
         title = in.readString();
+        if (in.readByte() == 0) {
+            originalDate = null;
+        } else {
+            originalDate = in.readLong();
+        }
         if (in.readByte() == 0) {
             date = null;
         } else {
@@ -91,6 +101,60 @@ public class Script implements Parcelable{
         }
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeString(title);
+        if (originalDate == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(originalDate);
+        }
+        if (date == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(date);
+        }
+        if (scrollSpeed == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(scrollSpeed);
+        }
+        if (fontSize == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(fontSize);
+        }
+        dest.writeByte((byte) (enableWaitTags == null ? 0 : enableWaitTags ? 1 : 2));
+        dest.writeByte((byte) (enableSmartScroll == null ? 0 : enableSmartScroll ? 1 : 2));
+        if (smartScrollInterval == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(smartScrollInterval);
+        }
+        if (smartScrollKeyframes == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(smartScrollKeyframes);
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     public static final Creator<Script> CREATOR = new Creator<Script>() {
         @Override
         public Script createFromParcel(Parcel in) {
@@ -119,6 +183,15 @@ public class Script implements Parcelable{
 
     public void setTitle(@NonNull String title) {
         this.title = title;
+    }
+
+    @NonNull
+    public Long getOriginalDate() {
+        return originalDate;
+    }
+
+    public void setOriginalDate(@NonNull Long originalDate) {
+        this.date = originalDate;
     }
 
     @NonNull
@@ -178,51 +251,4 @@ public class Script implements Parcelable{
         this.smartScrollKeyframes = smartScrollKeyframes;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        if (id == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(id);
-        }
-        parcel.writeString(title);
-        if (date == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(date);
-        }
-        if (scrollSpeed == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(scrollSpeed);
-        }
-        if (fontSize == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(fontSize);
-        }
-        parcel.writeByte((byte) (enableWaitTags == null ? 0 : enableWaitTags ? 1 : 2));
-        parcel.writeByte((byte) (enableSmartScroll == null ? 0 : enableSmartScroll ? 1 : 2));
-        if (smartScrollInterval == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(smartScrollInterval);
-        }
-        if (smartScrollKeyframes == null) {
-            parcel.writeByte((byte) 0);
-        } else {
-            parcel.writeByte((byte) 1);
-            parcel.writeLong(smartScrollKeyframes);
-        }
-    }
 }

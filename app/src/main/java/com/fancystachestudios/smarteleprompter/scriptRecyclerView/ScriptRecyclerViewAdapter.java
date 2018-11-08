@@ -1,20 +1,22 @@
 package com.fancystachestudios.smarteleprompter.scriptRecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
-import android.content.Loader;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.fancystachestudios.smarteleprompter.R;
+import com.fancystachestudios.smarteleprompter.ScriptSettingsActivity;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.utility.ScriptSearchLoader;
 
@@ -72,12 +74,18 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         Script currScript = data.get(position);
         holder.titleText.setText(currScript.getTitle());
-        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy h:mm a");
         holder.dateTimeText.setText(dateFormat.format(currScript.getDate()));
 
+        holder.menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopup(holder.menuButton, position);
+            }
+        });
         if(selectedTheme.equals(lightThemeValue)){
             holder.menuButton.setImageResource(R.drawable.baseline_more_vert_black_24);
         }else if(selectedTheme.equals(darkThemeValue)){
@@ -126,5 +134,29 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
             scriptSearchLoader = new ScriptSearchLoader(context, loaderManager);
             scriptSearchLoader.searchForTitle(data, searchString);
         }
+    }
+
+    //Popup added referencing the answer by:
+    //Shylendra Madda
+    //From:
+    //https://stackoverflow.com/questions/21329132/android-custom-dropdown-popup-menu
+    private void showPopup(View pressedView, final int index){
+        PopupMenu popupMenu = new PopupMenu(context, pressedView);
+        popupMenu.getMenuInflater()
+                .inflate(R.menu.main_script_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int clickedId = menuItem.getItemId();
+                if(clickedId == R.id.menu_main_script_scriptSettings){
+                    Intent intent = new Intent(context, ScriptSettingsActivity.class);
+                    intent.putExtra(context.getString(R.string.menu_main_script_settings_script_key), data.get(index));
+                    Log.d("naputest", data.get(index).getOriginalDate()+"");
+                    context.startActivity(intent);
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
     }
 }

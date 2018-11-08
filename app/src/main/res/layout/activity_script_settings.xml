@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Title" />
+
+            <EditText
+                android:id="@+id/script_settings_title_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Enter new title here" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Date"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/script_settings_date_original_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tool:text="Original: 12/34/5678" />
+
+                <TextView
+                    android:id="@+id/script_settings_date_current_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tool:text="Current: 12/34/5678" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/script_settings_date_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Date" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Time"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/script_settings_time_original_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tool:text="Original: 12:34am" />
+
+                <TextView
+                    android:id="@+id/script_settings_time_current_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tool:text="Current: 12:34am" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/script_settings_time_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Time" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Scroll Speed"/>
+
+            <EditText
+                android:id="@+id/script_settings_scroll_speed_edittext"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/default_scroll_speed" />
+
+            <TextView
+                android:textAlignment="center"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:text="WPM" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Font Size"/>
+
+            <EditText
+                android:id="@+id/script_settings_font_size_edittext"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/default_font_size" />
+
+            <TextView
+                android:textAlignment="center"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:text="pt" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Wait Tags"/>
+
+            <Switch
+                android:id="@+id/script_settings_wait_tags_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Smart Scroll"/>
+
+            <Switch
+                android:id="@+id/script_settings_smart_scroll_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end"
+            android:clickable="false">
+
+            <Button
+                android:enabled="false"
+                android:id="@+id/script_settings_record_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Record Smart Scroll" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="end"
+            android:alpha="0.5"
+            android:clickable="false"
+            android:background="#ff7d7d">
+
+            <Button
+                android:id="@+id/script_settings_delete_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="DELETE" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+ </ScrollView>

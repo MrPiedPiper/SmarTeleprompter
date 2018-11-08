@@ -23,7 +23,8 @@
             android:name="io.fabric.ApiKey"
             android:value="58ce85107853caf34accfd34313f76ad8e0c9608" />
 
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".ScriptSettingsActivity"></activity>
     </application>
 
 </manifest>
