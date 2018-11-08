@@ -1,8 +1,10 @@
 package com.fancystachestudios.smarteleprompter;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
@@ -235,6 +238,10 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     passedScript.setEnableWaitTags(b);
                     updateScript();
+
+                    if(b){
+                        Toast.makeText(context, R.string.script_settings_wait_tags_toast, Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
@@ -248,6 +255,40 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                     recordSmartScrollButton.setEnabled(smartScrollSwitch.isChecked());
                     passedScript.setEnableSmartScroll(b);
                     updateScript();
+                }
+            });
+
+            recordSmartScrollButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, TeleprompterActivity.class);
+                    intent.putExtra(getString(R.string.teleprompter_pass_smart_scroll), getString(R.string.teleprompter_pass_smart_scroll));
+                    intent.putExtra(getString(R.string.teleprompter_pass_script), passedScript);
+                    startActivity(intent);
+                }
+            });
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Created referencing answer by "Maaalte" edited by "Nicholas Betsworth" at https://stackoverflow.com/questions/5127407/how-to-implement-a-confirmation-yes-no-dialogpreference
+                    new AlertDialog.Builder(context)
+                            .setTitle(getString(R.string.script_settings_delete_dialog_title))
+                            .setMessage(String.format(getString(R.string.script_settings_delete_dialog_message), passedScript.getTitle()))
+                            .setPositiveButton(getString(R.string.script_settings_delete_dialog_yes), new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    AsyncTask.execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            scriptRoomDatabase.scriptDao().delete(passedScript.getId());
+                                            finish();
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton(getString(R.string.script_settings_delete_dialog_no), null)
+                            .show();
                 }
             });
 

@@ -29,6 +29,9 @@ public interface ScriptDao {
     @Query("DELETE FROM script_table")
     void deleteAll();
 
+    @Query("DELETE FROM script_table WHERE id = :scriptId")
+    void delete(Long scriptId);
+
     @Query("SELECT * from script_table ORDER BY date DESC")
     LiveData<List<Script>> getAllScripts();
 

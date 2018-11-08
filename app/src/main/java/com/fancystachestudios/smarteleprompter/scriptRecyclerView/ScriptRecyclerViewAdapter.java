@@ -1,7 +1,10 @@
 package com.fancystachestudios.smarteleprompter.scriptRecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -18,6 +21,8 @@ import android.widget.TextView;
 import com.fancystachestudios.smarteleprompter.R;
 import com.fancystachestudios.smarteleprompter.ScriptSettingsActivity;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
+import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
+import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 import com.fancystachestudios.smarteleprompter.utility.ScriptSearchLoader;
 
 import java.text.DateFormat;
@@ -44,6 +49,10 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     String lightThemeValue;
     String darkThemeValue;
 
+    Script clickedMenuScript;
+
+    ScriptRoomDatabase scriptRoomDatabase;
+
     public ScriptRecyclerViewAdapter(Context context, LoaderManager loaderManager, List<Script> data){
         this.context = context;
         this.loaderManager = loaderManager;
@@ -54,6 +63,8 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         selectedTheme = themeSharedPreferences.getString(context.getString(R.string.shared_pref_settings_theme_key), "");
         lightThemeValue = context.getString(R.string.settings_theme_light);
         darkThemeValue = context.getString(R.string.settings_theme_dark);
+
+        scriptRoomDatabase = ScriptSingleton.getInstance(context);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -78,7 +89,7 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        Script currScript = showing.get(position);
+        final Script currScript = showing.get(position);
         holder.titleText.setText(currScript.getTitle());
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         holder.dateTimeText.setText(dateFormat.format(currScript.getDate()));
@@ -86,7 +97,7 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         holder.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopup(holder.menuButton, position);
+                showPopup(holder.menuButton, position, currScript);
             }
         });
         if(selectedTheme.equals(lightThemeValue)){
@@ -151,7 +162,7 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     //Shylendra Madda
     //From:
     //https://stackoverflow.com/questions/21329132/android-custom-dropdown-popup-menu
-    private void showPopup(View pressedView, final int index){
+    private void showPopup(View pressedView, final int index, final Script currScript){
         PopupMenu popupMenu = new PopupMenu(context, pressedView);
         popupMenu.getMenuInflater()
                 .inflate(R.menu.main_script_menu, popupMenu.getMenu());
@@ -162,8 +173,25 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
                 if(clickedId == R.id.menu_main_script_scriptSettings){
                     Intent intent = new Intent(context, ScriptSettingsActivity.class);
                     intent.putExtra(context.getString(R.string.menu_main_script_settings_script_key), showing.get(index));
-                    Log.d("naputest", showing.get(index).getOriginalDate()+"");
                     context.startActivity(intent);
+                }else if(clickedId == R.id.menu_main_script_delete){
+                    //Created referencing answer by "Maaalte" edited by "Nicholas Betsworth" at https://stackoverflow.com/questions/5127407/how-to-implement-a-confirmation-yes-no-dialogpreference
+                    new AlertDialog.Builder(context)
+                            .setTitle(context.getString(R.string.script_settings_delete_dialog_title))
+                            .setMessage(String.format(context.getString(R.string.script_settings_delete_dialog_message), currScript.getTitle()))
+                            .setPositiveButton(context.getString(R.string.script_settings_delete_dialog_yes), new DialogInterface.OnClickListener(){
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    AsyncTask.execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            scriptRoomDatabase.scriptDao().delete(currScript.getId());
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton(context.getString(R.string.script_settings_delete_dialog_no), null)
+                            .show();
                 }
                 return true;
             }

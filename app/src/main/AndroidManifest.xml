@@ -24,7 +24,8 @@
             android:value="58ce85107853caf34accfd34313f76ad8e0c9608" />
 
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".ScriptSettingsActivity"></activity>
+        <activity android:name=".ScriptSettingsActivity" />
+        <activity android:name=".TeleprompterActivity"></activity>
     </application>
 
 </manifest>
