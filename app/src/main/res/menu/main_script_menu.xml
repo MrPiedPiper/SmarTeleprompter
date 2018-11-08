@@ -5,6 +5,10 @@
         android:title="@string/menu_main_script_settings"/>
 
     <item
+        android:id="@+id/menu_main_script_edit"
+        android:title="@string/menu_main_edit"/>
+
+    <item
         android:id="@+id/menu_main_script_delete"
         android:title="@string/menu_main_delete"/>
 </menu>

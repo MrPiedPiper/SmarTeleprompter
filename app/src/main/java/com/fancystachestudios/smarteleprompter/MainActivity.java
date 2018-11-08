@@ -1,9 +1,8 @@
 package com.fancystachestudios.smarteleprompter;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -21,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -79,6 +77,8 @@ public class MainActivity extends AppCompatActivity
     ScriptRoomDatabase scriptRoomDatabase;
     ScriptDao dao;
 
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity
         applyTheme();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        context = this;
 
         sortTitleKey = getString(R.string.main_sort_name);
         sortDateKey = getString(R.string.main_sort_date);
@@ -104,19 +106,7 @@ public class MainActivity extends AppCompatActivity
         sortSpinner.setAdapter(spinnerAdapter);
         sortSpinner.setOnItemSelectedListener(this);
 
-        final Date date = new Date();
-        final ArrayList<Script> testData = new ArrayList<>();
-        testData.add(new Script(date.getTime(), "test1", date.getTime(), date.getTime()));
-        testData.add(new Script(date.getTime()+1000, "btest2", date.getTime()+1000, date.getTime()+1000));
-        testData.add(new Script(date.getTime()+2000, "ftest3", date.getTime()+2000, date.getTime()+2000));
-        testData.add(new Script(date.getTime()+3000, "atest4", date.getTime()+3000, date.getTime()+3000));
-        testData.add(new Script(date.getTime()+4000, "gtest5", date.getTime()+4000, date.getTime()+4000));
-        testData.add(new Script(date.getTime()+5000, "dtest6", date.getTime()+5000, date.getTime()+5000));
-        testData.add(new Script(date.getTime()+6000, "ctest7", date.getTime()+6000, date.getTime()+6000));
-        testData.add(new Script(date.getTime()+7000, "etest8", date.getTime()+7000, date.getTime()+7000));
-
-
-        adapter = new ScriptRecyclerViewAdapter(this, getSupportLoaderManager(), testData);
+        adapter = new ScriptRecyclerViewAdapter(this, getSupportLoaderManager(), new ArrayList<Script>());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -129,14 +119,15 @@ public class MainActivity extends AppCompatActivity
                 adapter.updateData(scripts);
             }
         });
-        AsyncTask.execute(new Runnable() {
+
+        FAB.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                dao.insert(new Script(date.getTime(), "anothertest", date.getTime(), date.getTime()));
+            public void onClick(View view) {
+                Intent intent = new Intent(context, TeleprompterActivity.class);
+                intent.putExtra(getString(R.string.teleprompter_pass_mode), getString(R.string.teleprompter_pass_mode_new));
+                startActivity(intent);
             }
         });
-
-
 
         scriptSearchLoader = new ScriptSearchLoader(this, getSupportLoaderManager());
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -174,7 +165,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void searchComplete(ArrayList<Script> searchResults) {
-        Log.d("naputest", "complete");
         adapter.updateShowing(searchResults);
     }
 

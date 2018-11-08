@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,7 +27,6 @@ import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,6 +73,7 @@ public class ScriptSettingsActivity extends AppCompatActivity {
     Button deleteButton;
 
     ScriptRoomDatabase scriptRoomDatabase;
+    SharedPreferences sharedPreferences;
 
     Script passedScript;
 
@@ -90,6 +89,10 @@ public class ScriptSettingsActivity extends AppCompatActivity {
         context = this;
 
         scriptRoomDatabase = ScriptSingleton.getInstance(this);
+        sharedPreferences = getSharedPreferences(getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
+
+        fontSizeEditText.setHint(String.valueOf(sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), Integer.parseInt(getString(R.string.default_font_size)))));
+        scrollSpeedEditText.setHint(String.valueOf(sharedPreferences.getInt(getString(R.string.shared_pref_settings_scroll_speed_key), Integer.parseInt(getString(R.string.default_scroll_speed)))));
 
         Intent extras = getIntent();
 
@@ -262,7 +265,7 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, TeleprompterActivity.class);
-                    intent.putExtra(getString(R.string.teleprompter_pass_smart_scroll), getString(R.string.teleprompter_pass_smart_scroll));
+                    intent.putExtra(getString(R.string.teleprompter_pass_mode), getString(R.string.teleprompter_pass_mode_smart_scroll));
                     intent.putExtra(getString(R.string.teleprompter_pass_script), passedScript);
                     startActivity(intent);
                 }

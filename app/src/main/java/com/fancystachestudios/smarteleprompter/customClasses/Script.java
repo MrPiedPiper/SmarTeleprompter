@@ -33,6 +33,9 @@ public class Script implements Parcelable{
     @ColumnInfo(name = "date")
     private Long date;
 
+    @ColumnInfo(name = "body")
+    private String body;
+
     @ColumnInfo(name = "scroll_speed")
     private Long scrollSpeed;
 
@@ -201,6 +204,14 @@ public class Script implements Parcelable{
 
     public void setDate(@NonNull Long date) {
         this.date = date;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public Long getScrollSpeed() {

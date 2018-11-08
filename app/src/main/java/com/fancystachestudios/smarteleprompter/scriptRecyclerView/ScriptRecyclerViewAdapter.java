@@ -9,7 +9,6 @@ import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 
 import com.fancystachestudios.smarteleprompter.R;
 import com.fancystachestudios.smarteleprompter.ScriptSettingsActivity;
+import com.fancystachestudios.smarteleprompter.TeleprompterActivity;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
@@ -120,7 +120,6 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     }
 
     public void updateShowing(List<Script> newData){
-        Log.d("naptest", newData.size()+"");
         showing = (ArrayList<Script>) newData;
         notifyDataSetChanged();
     }
@@ -192,6 +191,11 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
                             })
                             .setNegativeButton(context.getString(R.string.script_settings_delete_dialog_no), null)
                             .show();
+                }else if(clickedId == R.id.menu_main_script_edit){
+                    Intent intent = new Intent(context, TeleprompterActivity.class);
+                    intent.putExtra(context.getString(R.string.teleprompter_pass_mode), context.getString(R.string.teleprompter_pass_mode_edit));
+                    intent.putExtra(context.getString(R.string.teleprompter_pass_script), currScript);
+                    context.startActivity(intent);
                 }
                 return true;
             }
