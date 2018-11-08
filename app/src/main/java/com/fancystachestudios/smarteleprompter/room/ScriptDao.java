@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 
@@ -21,6 +22,9 @@ public interface ScriptDao {
 
     @Insert
     void insert(Script script);
+
+    @Update
+    void update(Script... script);
 
     @Query("DELETE FROM script_table")
     void deleteAll();

@@ -48,6 +48,7 @@
     <string name="shared_pref_settings_theme_key">SmarTeleprompterSharedPreferencesSettingsThemeKey</string>
     <string name="shared_pref_settings_scroll_speed_key">SmarTeleprompterSharedPreferencesSettingsScrollSpeedKey</string>
     <string name="shared_pref_settings_font_size_key">SmarTeleprompterSharedPreferencesSettingsFontSizeKey</string>
+    <string name="script_settings_title_hint_edittext">Enter new title here</string>
 
 
 </resources>

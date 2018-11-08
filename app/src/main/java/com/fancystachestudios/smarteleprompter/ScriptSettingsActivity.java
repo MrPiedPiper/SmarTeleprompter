@@ -2,8 +2,11 @@ package com.fancystachestudios.smarteleprompter;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -12,6 +15,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
+import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
+import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,7 +61,7 @@ public class ScriptSettingsActivity extends AppCompatActivity {
     @BindView(R.id.script_settings_delete_button)
     Button deleteButton;
 
-
+    ScriptRoomDatabase scriptRoomDatabase;
 
     Script passedScript;
 
@@ -67,14 +72,33 @@ public class ScriptSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_script_settings);
         ButterKnife.bind(this);
 
+        scriptRoomDatabase = ScriptSingleton.getInstance(this);
+
         Intent extras = getIntent();
 
         if(extras != null){
             passedScript = (Script) extras.getParcelableExtra(getString(R.string.menu_main_script_settings_script_key));
 
             titleEditText.setText(passedScript.getTitle());
+            titleEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy");
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    passedScript.setTitle(titleEditText.getText().toString());
+                    updateScript();
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             originalDateTextView.setText(String.format(getString(R.string.script_settings_original_date_dynamic), dateFormat.format(new Date(passedScript.getOriginalDate()))));
             currentDateTextView.setText(String.format(getString(R.string.script_settings_current_date_dynamic), dateFormat.format(new Date(passedScript.getDate()))));
 
@@ -85,10 +109,56 @@ public class ScriptSettingsActivity extends AppCompatActivity {
             if(passedScript.getScrollSpeed() != null && passedScript.getScrollSpeed() != 0){
                 scrollSpeedEditText.setText(String.valueOf(passedScript.getScrollSpeed()));
             }
+            scrollSpeedEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    String currText = scrollSpeedEditText.getText().toString();
+                    if(currText.isEmpty() || currText.equals("0")){
+                        passedScript.setScrollSpeed(null);
+                        updateScript();
+                        return;
+                    }
+                    passedScript.setScrollSpeed(Long.parseLong(currText));
+                    updateScript();
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
 
             if(passedScript.getFontSize() != null && passedScript.getFontSize() != 0){
                 fontSizeEditText.setText(String.valueOf(passedScript.getFontSize()));
             }
+            fontSizeEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    String currText = fontSizeEditText.getText().toString();
+                    if(currText.isEmpty() || currText.equals("0")){
+                        passedScript.setFontSize(null);
+                        updateScript();
+                        return;
+                    }
+                    passedScript.setFontSize(Long.parseLong(currText));
+                    updateScript();
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
 
             if(passedScript.getEnableWaitTags() != null){
                 waitTagsSwitch.setChecked(passedScript.getEnableWaitTags());
@@ -96,7 +166,8 @@ public class ScriptSettingsActivity extends AppCompatActivity {
             waitTagsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
+                    passedScript.setEnableWaitTags(b);
+                    updateScript();
                 }
             });
 
@@ -108,10 +179,21 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     recordSmartScrollButton.setEnabled(smartScrollSwitch.isChecked());
+                    passedScript.setEnableSmartScroll(b);
+                    updateScript();
                 }
             });
 
         }
+    }
+    
+    private void updateScript(){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                scriptRoomDatabase.scriptDao().update(passedScript);
+            }
+        });
     }
 
     private void applyTheme(){

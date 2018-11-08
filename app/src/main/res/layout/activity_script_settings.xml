@@ -25,7 +25,7 @@
                 android:id="@+id/script_settings_title_edittext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Enter new title here" />
+                android:hint="@string/script_settings_title_hint_edittext" />
         </LinearLayout>
 
         <LinearLayout
@@ -112,6 +112,7 @@
                 android:text="Scroll Speed"/>
 
             <EditText
+                android:inputType="number"
                 android:id="@+id/script_settings_scroll_speed_edittext"
                 android:layout_width="56dp"
                 android:layout_height="wrap_content"
@@ -136,6 +137,7 @@
                 android:text="Font Size"/>
 
             <EditText
+                android:inputType="number"
                 android:id="@+id/script_settings_font_size_edittext"
                 android:layout_width="56dp"
                 android:layout_height="wrap_content"
