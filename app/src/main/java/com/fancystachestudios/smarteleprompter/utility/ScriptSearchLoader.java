@@ -8,6 +8,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.util.Log;
 
 import com.fancystachestudios.smarteleprompter.R;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;

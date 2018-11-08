@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

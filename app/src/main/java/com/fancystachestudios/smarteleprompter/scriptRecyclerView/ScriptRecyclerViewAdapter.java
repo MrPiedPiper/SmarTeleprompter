@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +36,7 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
 
     private Context context;
     private ArrayList<Script> data;
+    private ArrayList<Script> showing;
     ScriptSearchLoader scriptSearchLoader;
     LoaderManager loaderManager;
 
@@ -42,10 +44,11 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     String lightThemeValue;
     String darkThemeValue;
 
-    public ScriptRecyclerViewAdapter(Context context, LoaderManager loaderManager, ArrayList<Script> data){
+    public ScriptRecyclerViewAdapter(Context context, LoaderManager loaderManager, List<Script> data){
         this.context = context;
         this.loaderManager = loaderManager;
-        this.data = data;
+        this.data = (ArrayList<Script>) data;
+        showing = this.data;
 
         SharedPreferences themeSharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
         selectedTheme = themeSharedPreferences.getString(context.getString(R.string.shared_pref_settings_theme_key), "");
@@ -75,9 +78,9 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        Script currScript = data.get(position);
+        Script currScript = showing.get(position);
         holder.titleText.setText(currScript.getTitle());
-        DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy h:mm a");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         holder.dateTimeText.setText(dateFormat.format(currScript.getDate()));
 
         holder.menuButton.setOnClickListener(new View.OnClickListener() {
@@ -96,31 +99,39 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return showing.size();
     }
 
-    public void updateData(ArrayList<Script> newData){
-        data = newData;
+    public void updateData(List<Script> newData){
+        data = (ArrayList<Script>) newData;
+        showing = data;
+        notifyDataSetChanged();
+    }
+
+    public void updateShowing(List<Script> newData){
+        Log.d("naptest", newData.size()+"");
+        showing = (ArrayList<Script>) newData;
         notifyDataSetChanged();
     }
 
     public void clearList(){
         data.clear();
+        showing.clear();
         notifyDataSetChanged();
     }
 
     public void sortByDate(){
-        Collections.sort(data, new Comparator<Script>() {
+        Collections.sort(showing, new Comparator<Script>() {
             @Override
             public int compare(Script script1, Script script2) {
-                return script1.getDate().compareTo(script2.getDate());
+                return script2.getDate().compareTo(script1.getDate());
             }
         });
         notifyDataSetChanged();
     }
 
     public void sortByTitle(){
-        Collections.sort(data, new Comparator<Script>() {
+        Collections.sort(showing, new Comparator<Script>() {
             @Override
             public int compare(Script script1, Script script2) {
                 return script1.getTitle().compareTo(script2.getTitle());
@@ -132,8 +143,8 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     public void searchForTitle(String searchString){
         if(scriptSearchLoader == null){
             scriptSearchLoader = new ScriptSearchLoader(context, loaderManager);
-            scriptSearchLoader.searchForTitle(data, searchString);
         }
+        scriptSearchLoader.searchForTitle(data, searchString);
     }
 
     //Popup added referencing the answer by:
@@ -150,8 +161,8 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
                 int clickedId = menuItem.getItemId();
                 if(clickedId == R.id.menu_main_script_scriptSettings){
                     Intent intent = new Intent(context, ScriptSettingsActivity.class);
-                    intent.putExtra(context.getString(R.string.menu_main_script_settings_script_key), data.get(index));
-                    Log.d("naputest", data.get(index).getOriginalDate()+"");
+                    intent.putExtra(context.getString(R.string.menu_main_script_settings_script_key), showing.get(index));
+                    Log.d("naputest", showing.get(index).getOriginalDate()+"");
                     context.startActivity(intent);
                 }
                 return true;

@@ -1,7 +1,13 @@
 package com.fancystachestudios.smarteleprompter;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -23,16 +29,24 @@ import android.widget.Spinner;
 
 import com.crashlytics.android.Crashlytics;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
+import com.fancystachestudios.smarteleprompter.room.ScriptDao;
+import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
+import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
+import com.fancystachestudios.smarteleprompter.room.ScriptViewModel;
 import com.fancystachestudios.smarteleprompter.scriptRecyclerView.ScriptRecyclerViewAdapter;
 import com.fancystachestudios.smarteleprompter.utility.ScriptSearchLoader;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
+/**
+ * Room access and LiveDate done referencing https://codelabs.developers.google.com/codelabs/android-room-with-a-view/
+ */
 public class MainActivity extends AppCompatActivity
         implements
             AdapterView.OnItemSelectedListener,
@@ -61,6 +75,9 @@ public class MainActivity extends AppCompatActivity
     private String sortDateKey;
 
     ScriptSearchLoader scriptSearchLoader;
+
+    ScriptRoomDatabase scriptRoomDatabase;
+    ScriptDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +115,28 @@ public class MainActivity extends AppCompatActivity
         testData.add(new Script(date.getTime()+6000, "ctest7", date.getTime()+6000, date.getTime()+6000));
         testData.add(new Script(date.getTime()+7000, "etest8", date.getTime()+7000, date.getTime()+7000));
 
+
         adapter = new ScriptRecyclerViewAdapter(this, getSupportLoaderManager(), testData);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        scriptRoomDatabase = ScriptSingleton.getInstance(this);
+        dao = scriptRoomDatabase.scriptDao();
+        ScriptViewModel scriptViewModel = ViewModelProviders.of(this).get(ScriptViewModel.class);
+        scriptViewModel.getAllScripts().observe(this, new Observer<List<Script>>() {
+            @Override
+            public void onChanged(@Nullable List<Script> scripts) {
+                adapter.updateData(scripts);
+            }
+        });
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                dao.insert(new Script(date.getTime(), "anothertest", date.getTime(), date.getTime()));
+            }
+        });
+
+
 
         scriptSearchLoader = new ScriptSearchLoader(this, getSupportLoaderManager());
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -138,7 +174,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void searchComplete(ArrayList<Script> searchResults) {
-        adapter.updateData(searchResults);
+        Log.d("naputest", "complete");
+        adapter.updateShowing(searchResults);
     }
 
     @Override

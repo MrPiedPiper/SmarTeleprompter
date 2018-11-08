@@ -3,6 +3,8 @@ package com.fancystachestudios.smarteleprompter.room;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 
@@ -16,16 +18,16 @@ import java.util.List;
 
 public class ScriptViewModel extends AndroidViewModel {
 
-    private ScriptRepository mRepository;
+    private ScriptRoomDatabase mRepository;
     private LiveData<List<Script>> mAllScripts;
 
     public ScriptViewModel (Application application){
         super(application);
-        mRepository = new ScriptRepository(application);
-        mAllScripts = mRepository.getAllScripts();
+        mRepository = ScriptSingleton.getInstance(application.getApplicationContext());
+        mAllScripts = mRepository.scriptDao().getAllScripts();
     }
 
-    LiveData<List<Script>> getAllScripts(){return mAllScripts;}
+    public LiveData<List<Script>> getAllScripts(){return mAllScripts;}
 
-    public void insert(Script script){mRepository.insert(script);}
+    public void insert(Script script){mRepository.scriptDao().insert(script);}
 }
