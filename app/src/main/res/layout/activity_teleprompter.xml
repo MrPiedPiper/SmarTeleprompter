@@ -6,6 +6,7 @@
     xmlns:tool="http://schemas.android.com/tools">
 
     <ScrollView
+        android:id="@+id/teleprompter_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

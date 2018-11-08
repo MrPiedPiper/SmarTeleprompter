@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
@@ -23,6 +24,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TeleprompterActivity extends AppCompatActivity {
+
+    @BindView(R.id.teleprompter_scrollview)
+    ScrollView scrollView;
 
     @BindView(R.id.teleprompter_textviews)
     LinearLayout textViewsLinearLayout;
@@ -184,7 +188,11 @@ public class TeleprompterActivity extends AppCompatActivity {
     }
 
     private void startScroll(){
-        //TODO implement startScroll()
+        if(currScript.getEnableSmartScroll()){
+
+        }else{
+            
+        }
     }
 
     private void applyTheme(){

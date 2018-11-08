@@ -19,5 +19,6 @@
 
     <!--TODO: add a seperate theme for the activity_settings pages that *does* have an action bar-->
     <!--TODO: add Widget-->
+    <!--TODO: Replace... Loader... With... Asynctask... </3-->
 
 </resources>

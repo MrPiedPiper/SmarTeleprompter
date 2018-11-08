@@ -107,7 +107,6 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
     private void applyTheme(){
         SharedPreferences themeSharedPreferences = getSharedPreferences(getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
         String selectedTheme = themeSharedPreferences.getString(getString(R.string.shared_pref_settings_theme_key), "");
-        Log.d("naputest", selectedTheme);
         String lightThemeValue = getString(R.string.settings_theme_light);
         String darkThemeValue = getString(R.string.settings_theme_dark);
         if(selectedTheme.equals(lightThemeValue)){

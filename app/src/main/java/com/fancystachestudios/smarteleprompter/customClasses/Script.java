@@ -78,6 +78,7 @@ public class Script implements Parcelable{
         } else {
             date = in.readLong();
         }
+        body = in.readString();
         if (in.readByte() == 0) {
             scrollSpeed = null;
         } else {
@@ -125,6 +126,7 @@ public class Script implements Parcelable{
             dest.writeByte((byte) 1);
             dest.writeLong(date);
         }
+        dest.writeString(body);
         if (scrollSpeed == null) {
             dest.writeByte((byte) 0);
         } else {

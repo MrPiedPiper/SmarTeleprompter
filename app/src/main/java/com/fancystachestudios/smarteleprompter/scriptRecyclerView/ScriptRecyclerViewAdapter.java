@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,8 +50,6 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     String lightThemeValue;
     String darkThemeValue;
 
-    Script clickedMenuScript;
-
     ScriptRoomDatabase scriptRoomDatabase;
 
     public ScriptRecyclerViewAdapter(Context context, LoaderManager loaderManager, List<Script> data){
@@ -67,7 +66,7 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         scriptRoomDatabase = ScriptSingleton.getInstance(context);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.script_list_item_title) TextView titleText;
         @BindView(R.id.script_list_item_date_time) TextView dateTimeText;
         @BindView(R.id.script_list_item_menu) ImageButton menuButton;
@@ -75,6 +74,16 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         ViewHolder(View v){
             super(v);
             ButterKnife.bind(this, v);
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int clickedIndex = getAdapterPosition();
+            Intent intent = new Intent(context, TeleprompterActivity.class);
+            intent.putExtra(context.getString(R.string.teleprompter_pass_script), showing.get(clickedIndex));
+            intent.putExtra(context.getString(R.string.teleprompter_pass_mode), context.getString(R.string.teleprompter_pass_mode_normal));
+            context.startActivity(intent);
         }
     }
 
