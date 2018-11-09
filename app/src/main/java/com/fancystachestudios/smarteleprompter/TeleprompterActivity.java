@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.app.TaskStackBuilder;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -78,6 +80,7 @@ public class TeleprompterActivity extends AppCompatActivity {
         applyTheme();
         setContentView(R.layout.activity_teleprompter);
         ButterKnife.bind(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         scriptRoomDatabase = ScriptSingleton.getInstance(this);
 
@@ -355,6 +358,7 @@ public class TeleprompterActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ScriptSettingsActivity.class);
             intent.putExtra(getString(R.string.menu_main_script_settings_script_key), currScript);
             startActivity(intent);
+            return true;
         }else if(clickedId == R.id.menu_main_script_delete){
             //Created referencing answer by "Maaalte" edited by "Nicholas Betsworth" at https://stackoverflow.com/questions/5127407/how-to-implement-a-confirmation-yes-no-dialogpreference
             new AlertDialog.Builder(this)
@@ -374,10 +378,15 @@ public class TeleprompterActivity extends AppCompatActivity {
                     })
                     .setNegativeButton(getString(R.string.script_settings_delete_dialog_no), null)
                     .show();
+            return true;
         }else if(clickedId == R.id.menu_main_script_edit){
             editScriptMode();
+            return true;
+        }else if(clickedId == android.R.id.home){
+            onBackPressed();
+            return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

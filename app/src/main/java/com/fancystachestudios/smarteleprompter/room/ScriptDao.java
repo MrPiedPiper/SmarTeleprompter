@@ -37,4 +37,7 @@ public interface ScriptDao {
 
     @Query("SELECT * from script_table WHERE id = :scriptId")
     LiveData<Script> getScript(Long scriptId);
+
+    @Query("SELECT * from script_table ORDER BY date DESC")
+    List<Script> getAllScriptsList();
 }

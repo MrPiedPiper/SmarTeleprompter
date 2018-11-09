@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -85,6 +86,7 @@ public class ScriptSettingsActivity extends AppCompatActivity {
         applyTheme();
         setContentView(R.layout.activity_script_settings);
         ButterKnife.bind(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
 
@@ -317,5 +319,15 @@ public class ScriptSettingsActivity extends AppCompatActivity {
         }else if(selectedTheme.equals(darkThemeValue)){
             setTheme(R.style.AppThemeDark);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

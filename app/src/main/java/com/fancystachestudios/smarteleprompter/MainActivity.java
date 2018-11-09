@@ -32,6 +32,7 @@ import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 import com.fancystachestudios.smarteleprompter.room.ScriptViewModel;
 import com.fancystachestudios.smarteleprompter.scriptRecyclerView.ScriptRecyclerViewAdapter;
+import com.fancystachestudios.smarteleprompter.teleprompterWidget.TeleprompterWidgetIntentService;
 import com.fancystachestudios.smarteleprompter.utility.ScriptSearchLoader;
 
 import java.util.ArrayList;
@@ -92,13 +93,6 @@ public class MainActivity extends AppCompatActivity
         sortTitleKey = getString(R.string.main_sort_name);
         sortDateKey = getString(R.string.main_sort_date);
 
-        FAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("naputest", "FAB clicked");
-            }
-        });
-
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.main_spinner_items,
@@ -116,6 +110,7 @@ public class MainActivity extends AppCompatActivity
         scriptViewModel.getAllScripts().observe(this, new Observer<List<Script>>() {
             @Override
             public void onChanged(@Nullable List<Script> scripts) {
+                TeleprompterWidgetIntentService.startActionUpdateTeleprompterWidgets(getApplicationContext());
                 adapter.updateData(scripts);
             }
         });

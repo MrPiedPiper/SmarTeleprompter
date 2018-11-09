@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -47,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
         applyTheme();
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         sharedPreferences = getSharedPreferences(getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
         String selectedTheme = sharedPreferences.getString(getString(R.string.shared_pref_settings_theme_key), "");
@@ -148,5 +150,15 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
