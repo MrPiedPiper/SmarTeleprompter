@@ -1,5 +1,8 @@
 package com.fancystachestudios.smarteleprompter;
 
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +20,11 @@ import android.widget.TextView;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
+import com.google.android.gms.common.util.NumberUtils;
 
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,10 +56,14 @@ public class TeleprompterActivity extends AppCompatActivity {
     Script currScript;
 
     boolean makingNewScript = false;
+    boolean autoScrolling = false;
 
     ScriptRoomDatabase scriptRoomDatabase;
 
     SharedPreferences sharedPreferences;
+
+    Timer scrollTimer;
+    ValueAnimator smoothScroller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +113,11 @@ public class TeleprompterActivity extends AppCompatActivity {
                 }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_smart_scroll))){
                     saveSmartScroll();
                 }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_normal))){
-                    startScroll();
+                    if(!autoScrolling){
+                        startScroll();
+                    }else{
+                        stopScroll();
+                    }
                 }
             }
         });
@@ -188,10 +202,67 @@ public class TeleprompterActivity extends AppCompatActivity {
     }
 
     private void startScroll(){
-        if(currScript.getEnableSmartScroll()){
+        autoScrolling = true;
+        scrollTimer = new Timer();
+        fab.setImageResource(R.drawable.baseline_pause_white_36);
+        //Smooth scrolling created referencing answer by "Bartek Lipinski" at https://stackoverflow.com/questions/33870408/android-how-to-use-valueanimator
+        if(currScript.getEnableSmartScroll() == null || !currScript.getEnableSmartScroll()){
+            scrollTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    Runnable scrollRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            int scrollSpeed;
+                            int fontSize;
+                            int scrollAmount;
 
+                            if(currScript.getScrollSpeed() != null){
+                                scrollSpeed = Integer.parseInt(String.valueOf(currScript.getScrollSpeed()));
+                            }else{
+                                scrollSpeed = sharedPreferences.getInt(getString(R.string.shared_pref_settings_scroll_speed_key), Integer.valueOf(getString(R.string.default_scroll_speed)));
+                            }
+                            scrollSpeed *= 10;
+                            if(currScript.getFontSize() != null){
+                                fontSize = Integer.parseInt(String.valueOf(currScript.getFontSize()));
+                            }else{
+                                fontSize = sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), Integer.valueOf(getString(R.string.default_font_size)));
+                            }
+
+                            scrollAmount = (scrollSpeed / fontSize);
+
+                            smoothScroller = ValueAnimator.ofInt(scrollView.getScrollY(), scrollAmount + scrollView.getScrollY());
+                            smoothScroller.setDuration(1000);
+                            smoothScroller.setInterpolator(null);
+                            smoothScroller.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                    int scrollTo = (Integer)valueAnimator.getAnimatedValue();
+                                    scrollView.scrollTo(0, scrollTo);
+                                    if(!scrollView.canScrollVertically(1)){
+                                        stopScroll();
+                                    }
+                                }
+                            });
+                            smoothScroller.start();
+                        }
+                    };
+                    runOnUiThread(scrollRunnable);
+                }
+            }, 0, 1000);
         }else{
-            
+
+        }
+    }
+
+    private void stopScroll(){
+        if(scrollTimer != null && smoothScroller != null){
+            autoScrolling = false;
+            fab.setImageResource(R.drawable.baseline_play_arrow_white_36);
+            scrollTimer.cancel();
+            scrollTimer = null;
+            smoothScroller.cancel();
+            smoothScroller = null;
         }
     }
 

@@ -37,7 +37,7 @@
     </string-array>
 
     <!--Defaults-->
-    <string name="default_scroll_speed">130</string>
+    <string name="default_scroll_speed">300</string>
     <string name="default_font_size">14</string>
 
     <!--ScriptSettings-->
