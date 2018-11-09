@@ -23,6 +23,7 @@
     <string name="menu_main_delete">Delete</string>
     <string name="menu_main_edit">Edit</string>
 
+
     <!--Loader-->
     <string name="loader_search_title_key">loader_search_title_key</string>
     <string name="loader_search_list_key">loader_search_list_key</string>

@@ -4,14 +4,20 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -20,6 +26,7 @@ import android.widget.TextView;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
+import com.fancystachestudios.smarteleprompter.room.ScriptViewModel;
 import com.google.android.gms.common.util.NumberUtils;
 
 import java.util.Date;
@@ -80,15 +87,7 @@ public class TeleprompterActivity extends AppCompatActivity {
         currMode = launchIntent.getStringExtra(getString(R.string.teleprompter_pass_mode));
         currScript = launchIntent.getParcelableExtra(getString(R.string.teleprompter_pass_script));
         if(currScript != null){
-            loadCurrScript();
-            Long fontSize = currScript.getFontSize();
-            if(fontSize == null){
-                fontSize = (long)sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), Integer.parseInt(getString(R.string.default_font_size)));
-            }
-            titleTextView.setTextSize(fontSize*2);
-            bodyTextView.setTextSize(fontSize);
-            titleEditText.setTextSize(fontSize*2);
-            bodyEditText.setTextSize(fontSize);
+            scriptSetup();
         }
 
         if(currMode != null && !currMode.isEmpty()){
@@ -119,6 +118,31 @@ public class TeleprompterActivity extends AppCompatActivity {
                         stopScroll();
                     }
                 }
+            }
+        });
+    }
+
+    private void scriptSetup(){
+        ScriptViewModel scriptViewModel = ViewModelProviders.of(this).get(ScriptViewModel.class);
+        scriptViewModel.getScript(currScript.getId()).observe(this, new Observer<Script>() {
+            @Override
+            public void onChanged(@Nullable Script script) {
+                if(script != null) {
+                    currScript = script;
+                    loadCurrScript();
+                }else if(script == null && currMode == null || script == null && !makingNewScript){
+                    finish();
+                }
+                Long fontSize;
+                if(currScript != null && currScript.getFontSize() != null){
+                    fontSize = currScript.getFontSize();
+                }else {
+                    fontSize = (long) sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), Integer.parseInt(getString(R.string.default_font_size)));
+                }
+                titleTextView.setTextSize(fontSize * 2);
+                bodyTextView.setTextSize(fontSize);
+                titleEditText.setTextSize(fontSize * 2);
+                bodyEditText.setTextSize(fontSize);
             }
         });
     }
@@ -170,6 +194,7 @@ public class TeleprompterActivity extends AppCompatActivity {
             public void run() {
                 Date currDate = new Date();
                 currScript = new Script(currDate.getTime(), "New Script", currDate.getTime(), currDate.getTime());
+                scriptSetup();
                 makingNewScript = true;
                 loadCurrScript();
                 editScriptMode();
@@ -313,5 +338,59 @@ public class TeleprompterActivity extends AppCompatActivity {
             loadCurrScript();
             normalScriptMode();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_script_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int clickedId = item.getItemId();
+        if(clickedId == R.id.menu_main_script_scriptSettings){
+            Intent intent = new Intent(this, ScriptSettingsActivity.class);
+            intent.putExtra(getString(R.string.menu_main_script_settings_script_key), currScript);
+            startActivity(intent);
+        }else if(clickedId == R.id.menu_main_script_delete){
+            //Created referencing answer by "Maaalte" edited by "Nicholas Betsworth" at https://stackoverflow.com/questions/5127407/how-to-implement-a-confirmation-yes-no-dialogpreference
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.script_settings_delete_dialog_title))
+                    .setMessage(String.format(getString(R.string.script_settings_delete_dialog_message), currScript.getTitle()))
+                    .setPositiveButton(getString(R.string.script_settings_delete_dialog_yes), new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            AsyncTask.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    scriptRoomDatabase.scriptDao().delete(currScript.getId());
+                                    finish();
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.script_settings_delete_dialog_no), null)
+                    .show();
+        }else if(clickedId == R.id.menu_main_script_edit){
+            editScriptMode();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //Referenced answer by "nir" at https://stackoverflow.com/questions/5440601/android-how-to-enable-disable-option-menu-item-on-button-click
+        boolean isEnabled = true;
+        if(currMode.equals(getString(R.string.teleprompter_pass_mode_edit)) ||
+                currMode.equals(getString(R.string.teleprompter_pass_mode_new))){
+            isEnabled = false;
+        }
+        menu.getItem(0).setEnabled(isEnabled);
+        menu.getItem(1).setEnabled(isEnabled);
+        menu.getItem(2).setEnabled(isEnabled);
+        return true;
     }
 }

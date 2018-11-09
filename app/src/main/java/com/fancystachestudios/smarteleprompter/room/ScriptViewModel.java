@@ -29,5 +29,9 @@ public class ScriptViewModel extends AndroidViewModel {
 
     public LiveData<List<Script>> getAllScripts(){return mAllScripts;}
 
+    public LiveData<Script> getScript(long id){
+        return mRepository.scriptDao().getScript(id);
+    }
+
     public void insert(Script script){mRepository.scriptDao().insert(script);}
 }
