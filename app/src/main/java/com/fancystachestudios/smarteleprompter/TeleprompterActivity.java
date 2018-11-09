@@ -131,6 +131,7 @@ public class TeleprompterActivity extends AppCompatActivity {
                 editTextsLinearLayout.setVisibility(View.GONE);
                 textViewsLinearLayout.setVisibility(View.VISIBLE);
                 fab.setImageResource(R.drawable.baseline_play_arrow_white_36);
+                fab.setContentDescription(getString(R.string.telepromter_fab_content_description_play));
                 updateTextViews();
             }
         });
@@ -141,6 +142,7 @@ public class TeleprompterActivity extends AppCompatActivity {
         editTextsLinearLayout.setVisibility(View.VISIBLE);
         textViewsLinearLayout.setVisibility(View.GONE);
         fab.setImageResource(R.drawable.baseline_save_white_36);
+        fab.setContentDescription(getString(R.string.telepromter_fab_content_description_save));
         updateEditTexts();
     }
 
@@ -205,6 +207,7 @@ public class TeleprompterActivity extends AppCompatActivity {
         autoScrolling = true;
         scrollTimer = new Timer();
         fab.setImageResource(R.drawable.baseline_pause_white_36);
+        fab.setContentDescription(getString(R.string.telepromter_fab_content_description_pause));
         //Smooth scrolling created referencing answer by "Bartek Lipinski" at https://stackoverflow.com/questions/33870408/android-how-to-use-valueanimator
         if(currScript.getEnableSmartScroll() == null || !currScript.getEnableSmartScroll()){
             scrollTimer.scheduleAtFixedRate(new TimerTask() {
@@ -259,6 +262,7 @@ public class TeleprompterActivity extends AppCompatActivity {
         if(scrollTimer != null && smoothScroller != null){
             autoScrolling = false;
             fab.setImageResource(R.drawable.baseline_play_arrow_white_36);
+            fab.setContentDescription(getString(R.string.telepromter_fab_content_description_play));
             scrollTimer.cancel();
             scrollTimer = null;
             smoothScroller.cancel();

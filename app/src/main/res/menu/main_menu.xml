@@ -5,5 +5,6 @@
         android:id="@+id/main_menu_settings"
         android:title="@string/menu_main_settings"
         android:icon="@drawable/baseline_settings_white_36"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        android:contentDescription="@string/main_menu_settings_content_description"/>
 </menu>

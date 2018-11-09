@@ -103,6 +103,7 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy h:mm a");
         holder.dateTimeText.setText(dateFormat.format(currScript.getDate()));
 
+        holder.menuButton.setContentDescription(String.format(context.getString(R.string.main_content_description_script_menu), currScript.getTitle()));
         holder.menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
