@@ -71,6 +71,15 @@
     <string name="teleprompter_title_hint">Title</string>
     <string name="teleprompter_body_hint">Body</string>
 
+    <string name="script_settings_title_textview">Title</string>
+    <string name="script_settings_date_textview">Date</string>
+    <string name="script_settings_date_button">Set Date</string>
+    <string name="script_settings_time_textview">Time</string>
+    <string name="script_settings_time_button">Set Time</string>
+    <string name="script_settings_scroll_textview">Scroll Speed</string>
+    <string name="script_settings_font_textview">Font Size</string>
+    <string name="script_settings_delete_button">DELETE</string>
+
     <string name="teleprompter_dialog_dont_save_title">Are you sure?</string>
     <string name="teleprompter_dialog_dont_save_body">Do you want to discard your changes?</string>
     <string name="teleprompter_dialog_dont_save_yes">Discard</string>
@@ -96,7 +105,8 @@
 
     <!--AdMob-->
     <string name="admob_app_id">ca-app-pub-1573276806353273~2543157340</string>
-    <string name="widget_empty_text">No scripts</string>
 
+    <!--Widget-->
+    <string name="widget_empty_text">No scripts</string>
 
 </resources>

@@ -61,9 +61,6 @@ public class ScriptSettingsActivity extends AppCompatActivity {
     @BindView(R.id.script_settings_font_size_edittext)
     EditText fontSizeEditText;
 
-    @BindView(R.id.script_settings_wait_tags_switch)
-    Switch waitTagsSwitch;
-
     @BindView(R.id.script_settings_delete_button)
     Button deleteButton;
 
@@ -226,21 +223,6 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                 @Override
                 public void afterTextChanged(Editable editable) {
 
-                }
-            });
-
-            if(passedScript.getEnableWaitTags() != null){
-                waitTagsSwitch.setChecked(passedScript.getEnableWaitTags());
-            }
-            waitTagsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    passedScript.setEnableWaitTags(b);
-                    updateScript();
-
-                    if(b){
-                        Toast.makeText(context, R.string.script_settings_wait_tags_toast, Toast.LENGTH_LONG).show();
-                    }
                 }
             });
 

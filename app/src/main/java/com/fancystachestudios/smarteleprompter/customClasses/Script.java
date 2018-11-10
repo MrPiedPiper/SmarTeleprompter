@@ -42,9 +42,6 @@ public class Script implements Parcelable{
     @ColumnInfo(name = "font_size")
     private Long fontSize;
 
-    @ColumnInfo(name = "enable_wait_tags")
-    private Boolean enableWaitTags;
-
     public Script(@NonNull Long id, @NonNull String title, @NonNull Long originalDate, @NonNull Long date) {
         this.id = id;
         this.title = title;
@@ -80,50 +77,6 @@ public class Script implements Parcelable{
         } else {
             fontSize = in.readLong();
         }
-        byte tmpEnableWaitTags = in.readByte();
-        enableWaitTags = tmpEnableWaitTags == 0 ? null : tmpEnableWaitTags == 1;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (id == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(id);
-        }
-        dest.writeString(title);
-        if (originalDate == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(originalDate);
-        }
-        if (date == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(date);
-        }
-        dest.writeString(body);
-        if (scrollSpeed == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(scrollSpeed);
-        }
-        if (fontSize == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(fontSize);
-        }
-        dest.writeByte((byte) (enableWaitTags == null ? 0 : enableWaitTags ? 1 : 2));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public static final Creator<Script> CREATOR = new Creator<Script>() {
@@ -198,12 +151,44 @@ public class Script implements Parcelable{
         this.fontSize = fontSize;
     }
 
-    public Boolean getEnableWaitTags() {
-        return enableWaitTags;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setEnableWaitTags(Boolean enableWaitTags) {
-        this.enableWaitTags = enableWaitTags;
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(id);
+        }
+        parcel.writeString(title);
+        if (originalDate == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(originalDate);
+        }
+        if (date == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(date);
+        }
+        parcel.writeString(body);
+        if (scrollSpeed == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(scrollSpeed);
+        }
+        if (fontSize == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeLong(fontSize);
+        }
     }
-
 }

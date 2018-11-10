@@ -19,7 +19,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Title" />
+                android:text="@string/script_settings_title_textview" />
 
             <EditText
                 android:id="@+id/script_settings_title_edittext"
@@ -37,7 +37,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Date"/>
+                android:text="@string/script_settings_date_textview"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -61,7 +61,7 @@
                 android:id="@+id/script_settings_date_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Date" />
+                android:text="@string/script_settings_date_button" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,7 +73,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Time"/>
+                android:text="@string/script_settings_time_textview"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -97,7 +97,7 @@
                 android:id="@+id/script_settings_time_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Set Time" />
+                android:text="@string/script_settings_time_button" />
         </LinearLayout>
 
         <LinearLayout
@@ -109,20 +109,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Scroll Speed"/>
+                android:text="@string/script_settings_scroll_textview"/>
 
             <EditText
                 android:inputType="number"
                 android:id="@+id/script_settings_scroll_speed_edittext"
-                android:layout_width="56dp"
+                android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/default_scroll_speed" />
-
-            <TextView
-                android:textAlignment="center"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:text="WPM" />
         </LinearLayout>
 
         <LinearLayout
@@ -134,38 +128,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Font Size"/>
+                android:text="@string/script_settings_font_textview"/>
 
             <EditText
                 android:inputType="number"
                 android:id="@+id/script_settings_font_size_edittext"
-                android:layout_width="56dp"
+                android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/default_font_size" />
-
-            <TextView
-                android:textAlignment="center"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:text="pt" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:gravity="end">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Wait Tags"/>
-
-            <Switch
-                android:id="@+id/script_settings_wait_tags_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false" />
         </LinearLayout>
 
         <LinearLayout
@@ -181,7 +151,7 @@
                 android:id="@+id/script_settings_delete_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="DELETE" />
+                android:text="@string/script_settings_delete_button" />
         </LinearLayout>
 
     </LinearLayout>
