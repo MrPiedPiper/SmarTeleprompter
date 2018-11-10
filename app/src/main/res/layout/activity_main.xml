@@ -39,25 +39,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toTopOf="@+id/cardView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         tools:listitem="@layout/script_list_item">
 
     </android.support.v7.widget.RecyclerView>
-
-    <LinearLayout
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:colorBackground"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_resume_button" />
-    </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:translationZ="6dp"
