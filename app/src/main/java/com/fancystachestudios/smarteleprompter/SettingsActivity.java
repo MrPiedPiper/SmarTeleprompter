@@ -40,8 +40,6 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
 
     String currTheme;
 
-    boolean spinnerSetUp = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +64,8 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
                 android.R.layout.simple_spinner_dropdown_item
         );
         themeSpinner.setAdapter(spinnerAdapter);
+        themeSpinner.setSelection(getSpinnerIndex(themeSpinner, selectedTheme), false);
         themeSpinner.setOnItemSelectedListener(this);
-        themeSpinner.setSelection(getSpinnerIndex(themeSpinner, selectedTheme));
 
         int scrollSpeed = sharedPreferences.getInt(getString(R.string.shared_pref_settings_scroll_speed_key), 0);
         int fontSize = sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), 0);
@@ -122,10 +120,6 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        if(!spinnerSetUp){
-            spinnerSetUp = true;
-            return;
-        }
         String selection = parent.getItemAtPosition(pos).toString();
         if(selection.equals(getString(R.string.settings_theme_light))){
             Editor editor = sharedPreferences.edit();
@@ -161,4 +155,5 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

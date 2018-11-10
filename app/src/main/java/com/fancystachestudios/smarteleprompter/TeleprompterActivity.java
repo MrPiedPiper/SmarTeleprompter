@@ -80,6 +80,8 @@ public class TeleprompterActivity extends AppCompatActivity {
     @BindView(R.id.adView)
     AdView mAdView;
 
+    boolean savestateActivated = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +89,20 @@ public class TeleprompterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_teleprompter);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if(savedInstanceState != null){
+            savestateActivated = true;
+            autoScrolling = savedInstanceState.getBoolean(getString(R.string.teleprompter_scrolling_savestate));
+            currMode = savedInstanceState.getString(getString(R.string.teleprompter_mode_savestate));
+            currScript = savedInstanceState.getParcelable(getString(R.string.teleprompter_script_savestate));
+
+            String savedTitle = savedInstanceState.getString(getString(R.string.teleprompter_script_title_savestate));
+            String savedBody = savedInstanceState.getString(getString(R.string.teleprompter_script_body_savestate));
+            titleTextView.setText(savedTitle);
+            bodyTextView.setText(savedBody);
+            titleEditText.setText(savedTitle);
+            bodyEditText.setText(savedBody);
+        }
 
         MobileAds.initialize(this, getString(R.string.admob_app_id));
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -97,8 +113,10 @@ public class TeleprompterActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(getString(R.string.shared_pref_settings_key), MODE_PRIVATE);
 
         Intent launchIntent = getIntent();
-        currMode = launchIntent.getStringExtra(getString(R.string.teleprompter_pass_mode));
-        currScript = launchIntent.getParcelableExtra(getString(R.string.teleprompter_pass_script));
+        if(currMode == null && !savestateActivated){
+            currMode = launchIntent.getStringExtra(getString(R.string.teleprompter_pass_mode));
+            currScript = launchIntent.getParcelableExtra(getString(R.string.teleprompter_pass_script));
+        }
         if(currScript != null){
             scriptSetup();
         }
@@ -140,7 +158,8 @@ public class TeleprompterActivity extends AppCompatActivity {
         scriptViewModel.getScript(currScript.getId()).observe(this, new Observer<Script>() {
             @Override
             public void onChanged(@Nullable Script script) {
-                if(script != null) {
+                if(script != null && currMode.equals(getString(R.string.teleprompter_pass_mode_normal)) || currMode.equals(getString(R.string.teleprompter_pass_mode_edit))) {
+                    Log.d("naputest", "loading");
                     currScript = script;
                     loadCurrScript();
                 }else if(script == null && currMode == null || script == null && !makingNewScript){
@@ -156,6 +175,12 @@ public class TeleprompterActivity extends AppCompatActivity {
                 bodyTextView.setTextSize(fontSize);
                 titleEditText.setTextSize(fontSize * 2);
                 bodyEditText.setTextSize(fontSize);
+
+                if(autoScrolling){
+                    startScroll();
+                }else{
+                    stopScroll();
+                }
             }
         });
     }
@@ -411,5 +436,15 @@ public class TeleprompterActivity extends AppCompatActivity {
         menu.getItem(1).setEnabled(isEnabled);
         menu.getItem(2).setEnabled(isEnabled);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(getString(R.string.teleprompter_mode_savestate), currMode);
+        outState.putBoolean(getString(R.string.teleprompter_scrolling_savestate), autoScrolling);
+        outState.putParcelable(getString(R.string.teleprompter_script_savestate), currScript);
+        outState.putString(getString(R.string.teleprompter_script_title_savestate), titleEditText.getText().toString());
+        outState.putString(getString(R.string.teleprompter_script_body_savestate), bodyEditText.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 }

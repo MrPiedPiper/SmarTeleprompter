@@ -1,5 +1,6 @@
 package com.fancystachestudios.smarteleprompter.scriptRecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,13 +19,13 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.fancystachestudios.smarteleprompter.MainActivity;
 import com.fancystachestudios.smarteleprompter.R;
 import com.fancystachestudios.smarteleprompter.ScriptSettingsActivity;
 import com.fancystachestudios.smarteleprompter.TeleprompterActivity;
 import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
-import com.fancystachestudios.smarteleprompter.utility.ScriptSearchLoader;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,6 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
     private Context context;
     private ArrayList<Script> data;
     private ArrayList<Script> showing;
-    ScriptSearchLoader scriptSearchLoader;
     LoaderManager loaderManager;
 
     String selectedTheme;
@@ -52,6 +52,9 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
 
     ScriptRoomDatabase scriptRoomDatabase;
 
+    private ScriptRecyclerViewAdapter.scriptSearchInterface thisInterface;
+
+    @SuppressLint("StaticFieldLeak")
     public ScriptRecyclerViewAdapter(Context context, LoaderManager loaderManager, List<Script> data){
         this.context = context;
         this.loaderManager = loaderManager;
@@ -64,6 +67,9 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         darkThemeValue = context.getString(R.string.settings_theme_dark);
 
         scriptRoomDatabase = ScriptSingleton.getInstance(context);
+
+        thisInterface = (ScriptRecyclerViewAdapter.scriptSearchInterface)context;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -160,11 +166,25 @@ public class ScriptRecyclerViewAdapter extends RecyclerView.Adapter<ScriptRecycl
         notifyDataSetChanged();
     }
 
-    public void searchForTitle(String searchString){
-        if(scriptSearchLoader == null){
-            scriptSearchLoader = new ScriptSearchLoader(context, loaderManager);
-        }
-        scriptSearchLoader.searchForTitle(data, searchString);
+    public interface scriptSearchInterface{
+        void searchComplete(ArrayList<Script> searchResults);
+    }
+
+    public void searchForTitle(final String searchString){
+        final ArrayList<Script> searchArray = data;
+        AsyncTask.execute(new Runnable(){
+            @Override
+            public void run() {
+                ArrayList<Script> matches = new ArrayList<>();
+
+                for (Script currScript:searchArray) {
+                    if(currScript.getTitle().toLowerCase().contains(searchString.toLowerCase())) matches.add(currScript);
+                }
+
+                thisInterface.searchComplete(matches);
+            }
+
+        });
     }
 
     //Popup added referencing the answer by:

@@ -33,7 +33,6 @@ import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 import com.fancystachestudios.smarteleprompter.room.ScriptViewModel;
 import com.fancystachestudios.smarteleprompter.scriptRecyclerView.ScriptRecyclerViewAdapter;
 import com.fancystachestudios.smarteleprompter.teleprompterWidget.TeleprompterWidgetIntentService;
-import com.fancystachestudios.smarteleprompter.utility.ScriptSearchLoader;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +48,7 @@ import io.fabric.sdk.android.Fabric;
 public class MainActivity extends AppCompatActivity
         implements
             AdapterView.OnItemSelectedListener,
-            ScriptSearchLoader.scriptSearchLoaderInterface{
+            ScriptRecyclerViewAdapter.scriptSearchInterface{
 
     @BindView(R.id.main_fab)
     FloatingActionButton FAB;
@@ -73,12 +72,12 @@ public class MainActivity extends AppCompatActivity
     private String sortTitleKey;
     private String sortDateKey;
 
-    ScriptSearchLoader scriptSearchLoader;
-
     ScriptRoomDatabase scriptRoomDatabase;
     ScriptDao dao;
 
     Context context;
+
+    List<Script> startScriptArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,20 +99,22 @@ public class MainActivity extends AppCompatActivity
         sortSpinner.setAdapter(spinnerAdapter);
         sortSpinner.setOnItemSelectedListener(this);
 
-        adapter = new ScriptRecyclerViewAdapter(this, getSupportLoaderManager(), new ArrayList<Script>());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         scriptRoomDatabase = ScriptSingleton.getInstance(this);
         dao = scriptRoomDatabase.scriptDao();
         ScriptViewModel scriptViewModel = ViewModelProviders.of(this).get(ScriptViewModel.class);
+
         scriptViewModel.getAllScripts().observe(this, new Observer<List<Script>>() {
             @Override
             public void onChanged(@Nullable List<Script> scripts) {
+                startScriptArrayList = scripts;
                 TeleprompterWidgetIntentService.startActionUpdateTeleprompterWidgets(getApplicationContext());
-                adapter.updateData(scripts);
+                adapter.updateData(startScriptArrayList);
             }
         });
+
+        adapter = new ScriptRecyclerViewAdapter(this, getSupportLoaderManager(), startScriptArrayList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +125,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        scriptSearchLoader = new ScriptSearchLoader(this, getSupportLoaderManager());
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+        restoreViews(savedInstanceState);
     }
 
     @Override
@@ -159,8 +161,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void searchComplete(ArrayList<Script> searchResults) {
-        adapter.updateShowing(searchResults);
+    public void searchComplete(final ArrayList<Script> searchResults) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.updateShowing(searchResults);
+            }
+        });
     }
 
     @Override
@@ -178,6 +185,18 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(getString(R.string.main_edittext_search_savestate), searchEditText.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    private void restoreViews(Bundle savedInstanceState){
+        if(savedInstanceState != null){
+            searchEditText.setText(savedInstanceState.getString(getString(R.string.main_edittext_search_savestate)));
+        }
     }
 
     private void applyTheme(){
