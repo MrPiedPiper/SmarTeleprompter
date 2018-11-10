@@ -126,8 +126,6 @@ public class TeleprompterActivity extends AppCompatActivity {
                 editScriptMode();
             }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_new))){
                 newScriptMode();
-            }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_smart_scroll))){
-                recordSmartScrollMode();
             }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_normal))){
                 normalScriptMode();
             }
@@ -140,8 +138,6 @@ public class TeleprompterActivity extends AppCompatActivity {
                     saveEdit();
                 }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_new))){
                     saveEdit();
-                }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_smart_scroll))){
-                    saveSmartScroll();
                 }else if(currMode.equals(getString(R.string.teleprompter_pass_mode_normal))){
                     if(!autoScrolling){
                         startScroll();
@@ -158,9 +154,10 @@ public class TeleprompterActivity extends AppCompatActivity {
         scriptViewModel.getScript(currScript.getId()).observe(this, new Observer<Script>() {
             @Override
             public void onChanged(@Nullable Script script) {
-                if(script != null && currMode.equals(getString(R.string.teleprompter_pass_mode_normal)) || currMode.equals(getString(R.string.teleprompter_pass_mode_edit))) {
+                if(script != null && (currMode.equals(getString(R.string.teleprompter_pass_mode_normal)) || currMode.equals(getString(R.string.teleprompter_pass_mode_edit)))) {
                     Log.d("naputest", "loading");
                     currScript = script;
+                    Log.d("naputest", "null = "+script.toString());
                     loadCurrScript();
                 }else if(script == null && currMode == null || script == null && !makingNewScript){
                     finish();
@@ -212,7 +209,9 @@ public class TeleprompterActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                currScript.setTitle(titleEditText.getText().toString());
+                if(!titleEditText.getText().toString().isEmpty()){
+                    currScript.setTitle(titleEditText.getText().toString());
+                }
                 currScript.setBody(bodyEditText.getText().toString());
                 if(makingNewScript){
                     scriptRoomDatabase.scriptDao().insert(currScript);
@@ -240,11 +239,6 @@ public class TeleprompterActivity extends AppCompatActivity {
         });
     }
 
-    private void recordSmartScrollMode(){
-        editTextsLinearLayout.setVisibility(View.VISIBLE);
-        textViewsLinearLayout.setVisibility(View.GONE);
-    }
-
     private void updateTextViews(){
         titleTextView.setText(titleEditText.getText().toString());
         bodyTextView.setText(bodyEditText.getText().toString());
@@ -262,63 +256,55 @@ public class TeleprompterActivity extends AppCompatActivity {
         bodyEditText.setText(currScript.getBody());
     }
 
-    private void saveSmartScroll(){
-        //TODO implement saveSmartScroll()
-    }
-
     private void startScroll(){
         autoScrolling = true;
         scrollTimer = new Timer();
         fab.setImageResource(R.drawable.baseline_pause_white_36);
         fab.setContentDescription(getString(R.string.telepromter_fab_content_description_pause));
         //Smooth scrolling created referencing answer by "Bartek Lipinski" at https://stackoverflow.com/questions/33870408/android-how-to-use-valueanimator
-        if(currScript.getEnableSmartScroll() == null || !currScript.getEnableSmartScroll()){
-            scrollTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    Runnable scrollRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            int scrollSpeed;
-                            int fontSize;
-                            int scrollAmount;
+        scrollTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Runnable scrollRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        int scrollSpeed;
+                        int fontSize;
+                        int scrollAmount;
 
-                            if(currScript.getScrollSpeed() != null){
-                                scrollSpeed = Integer.parseInt(String.valueOf(currScript.getScrollSpeed()));
-                            }else{
-                                scrollSpeed = sharedPreferences.getInt(getString(R.string.shared_pref_settings_scroll_speed_key), Integer.valueOf(getString(R.string.default_scroll_speed)));
-                            }
-                            scrollSpeed *= 10;
-                            if(currScript.getFontSize() != null){
-                                fontSize = Integer.parseInt(String.valueOf(currScript.getFontSize()));
-                            }else{
-                                fontSize = sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), Integer.valueOf(getString(R.string.default_font_size)));
-                            }
-
-                            scrollAmount = (scrollSpeed / fontSize);
-
-                            smoothScroller = ValueAnimator.ofInt(scrollView.getScrollY(), scrollAmount + scrollView.getScrollY());
-                            smoothScroller.setDuration(1000);
-                            smoothScroller.setInterpolator(null);
-                            smoothScroller.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                @Override
-                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                    int scrollTo = (Integer)valueAnimator.getAnimatedValue();
-                                    scrollView.scrollTo(0, scrollTo);
-                                    if(!scrollView.canScrollVertically(1)){
-                                        stopScroll();
-                                    }
-                                }
-                            });
-                            smoothScroller.start();
+                        if(currScript.getScrollSpeed() != null){
+                            scrollSpeed = Integer.parseInt(String.valueOf(currScript.getScrollSpeed()));
+                        }else{
+                            scrollSpeed = sharedPreferences.getInt(getString(R.string.shared_pref_settings_scroll_speed_key), Integer.valueOf(getString(R.string.default_scroll_speed)));
                         }
-                    };
-                    runOnUiThread(scrollRunnable);
-                }
-            }, 0, 1000);
-        }else{
+                        scrollSpeed *= 10;
+                        if(currScript.getFontSize() != null){
+                            fontSize = Integer.parseInt(String.valueOf(currScript.getFontSize()));
+                        }else{
+                            fontSize = sharedPreferences.getInt(getString(R.string.shared_pref_settings_font_size_key), Integer.valueOf(getString(R.string.default_font_size)));
+                        }
 
-        }
+                        scrollAmount = (scrollSpeed / fontSize);
+
+                        smoothScroller = ValueAnimator.ofInt(scrollView.getScrollY(), scrollAmount + scrollView.getScrollY());
+                        smoothScroller.setDuration(1000);
+                        smoothScroller.setInterpolator(null);
+                        smoothScroller.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                int scrollTo = (Integer)valueAnimator.getAnimatedValue();
+                                scrollView.scrollTo(0, scrollTo);
+                                if(!scrollView.canScrollVertically(1)){
+                                    stopScroll();
+                                }
+                            }
+                        });
+                        smoothScroller.start();
+                    }
+                };
+                runOnUiThread(scrollRunnable);
+            }
+        }, 0, 1000);
     }
 
     private void stopScroll(){

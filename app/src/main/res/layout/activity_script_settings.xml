@@ -172,39 +172,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:gravity="end">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Smart Scroll"/>
-
-            <Switch
-                android:id="@+id/script_settings_smart_scroll_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:gravity="end"
-            android:clickable="false">
-
-            <Button
-                android:enabled="false"
-                android:id="@+id/script_settings_record_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Record Smart Scroll" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
             android:gravity="end"
             android:alpha="0.5"
             android:clickable="false"

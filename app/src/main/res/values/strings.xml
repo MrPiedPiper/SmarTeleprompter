@@ -96,6 +96,7 @@
 
     <!--AdMob-->
     <string name="admob_app_id">ca-app-pub-1573276806353273~2543157340</string>
+    <string name="widget_empty_text">No scripts</string>
 
 
 </resources>

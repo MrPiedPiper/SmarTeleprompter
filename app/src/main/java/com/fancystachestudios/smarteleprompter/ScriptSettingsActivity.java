@@ -64,12 +64,6 @@ public class ScriptSettingsActivity extends AppCompatActivity {
     @BindView(R.id.script_settings_wait_tags_switch)
     Switch waitTagsSwitch;
 
-    @BindView(R.id.script_settings_smart_scroll_switch)
-    Switch smartScrollSwitch;
-
-    @BindView(R.id.script_settings_record_button)
-    Button recordSmartScrollButton;
-
     @BindView(R.id.script_settings_delete_button)
     Button deleteButton;
 
@@ -247,29 +241,6 @@ public class ScriptSettingsActivity extends AppCompatActivity {
                     if(b){
                         Toast.makeText(context, R.string.script_settings_wait_tags_toast, Toast.LENGTH_LONG).show();
                     }
-                }
-            });
-
-            if(passedScript.getEnableSmartScroll() != null){
-                smartScrollSwitch.setChecked(passedScript.getEnableSmartScroll());
-            }
-            recordSmartScrollButton.setEnabled(smartScrollSwitch.isChecked());
-            smartScrollSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    recordSmartScrollButton.setEnabled(smartScrollSwitch.isChecked());
-                    passedScript.setEnableSmartScroll(b);
-                    updateScript();
-                }
-            });
-
-            recordSmartScrollButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(context, TeleprompterActivity.class);
-                    intent.putExtra(getString(R.string.teleprompter_pass_mode), getString(R.string.teleprompter_pass_mode_smart_scroll));
-                    intent.putExtra(getString(R.string.teleprompter_pass_script), passedScript);
-                    startActivity(intent);
                 }
             });
 

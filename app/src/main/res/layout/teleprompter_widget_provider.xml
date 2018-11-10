@@ -12,7 +12,8 @@
     </ListView>
 
     <TextView
-        android:text="Empty"
+        android:text="@string/widget_empty_text"
+        android:textSize="28sp"
         android:id="@+id/widget_empty_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

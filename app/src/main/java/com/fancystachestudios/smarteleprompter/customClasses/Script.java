@@ -45,15 +45,6 @@ public class Script implements Parcelable{
     @ColumnInfo(name = "enable_wait_tags")
     private Boolean enableWaitTags;
 
-    @ColumnInfo(name = "enable_smart_scroll")
-    private Boolean enableSmartScroll;
-
-    @ColumnInfo(name = "smart_scroll_interval")
-    private Long smartScrollInterval;
-
-    @ColumnInfo(name = "smart_scroll_keyframes")
-    private Long smartScrollKeyframes;
-
     public Script(@NonNull Long id, @NonNull String title, @NonNull Long originalDate, @NonNull Long date) {
         this.id = id;
         this.title = title;
@@ -91,18 +82,6 @@ public class Script implements Parcelable{
         }
         byte tmpEnableWaitTags = in.readByte();
         enableWaitTags = tmpEnableWaitTags == 0 ? null : tmpEnableWaitTags == 1;
-        byte tmpEnableSmartScroll = in.readByte();
-        enableSmartScroll = tmpEnableSmartScroll == 0 ? null : tmpEnableSmartScroll == 1;
-        if (in.readByte() == 0) {
-            smartScrollInterval = null;
-        } else {
-            smartScrollInterval = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            smartScrollKeyframes = null;
-        } else {
-            smartScrollKeyframes = in.readLong();
-        }
     }
 
     @Override
@@ -140,19 +119,6 @@ public class Script implements Parcelable{
             dest.writeLong(fontSize);
         }
         dest.writeByte((byte) (enableWaitTags == null ? 0 : enableWaitTags ? 1 : 2));
-        dest.writeByte((byte) (enableSmartScroll == null ? 0 : enableSmartScroll ? 1 : 2));
-        if (smartScrollInterval == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(smartScrollInterval);
-        }
-        if (smartScrollKeyframes == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(smartScrollKeyframes);
-        }
     }
 
     @Override
@@ -238,30 +204,6 @@ public class Script implements Parcelable{
 
     public void setEnableWaitTags(Boolean enableWaitTags) {
         this.enableWaitTags = enableWaitTags;
-    }
-
-    public Boolean getEnableSmartScroll() {
-        return enableSmartScroll;
-    }
-
-    public void setEnableSmartScroll(Boolean enableSmartScroll) {
-        this.enableSmartScroll = enableSmartScroll;
-    }
-
-    public Long getSmartScrollInterval() {
-        return smartScrollInterval;
-    }
-
-    public void setSmartScrollInterval(Long smartScrollInterval) {
-        this.smartScrollInterval = smartScrollInterval;
-    }
-
-    public Long getSmartScrollKeyframes() {
-        return smartScrollKeyframes;
-    }
-
-    public void setSmartScrollKeyframes(Long smartScrollKeyframes) {
-        this.smartScrollKeyframes = smartScrollKeyframes;
     }
 
 }
