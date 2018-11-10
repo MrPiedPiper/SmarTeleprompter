@@ -29,6 +29,9 @@ import com.fancystachestudios.smarteleprompter.customClasses.Script;
 import com.fancystachestudios.smarteleprompter.room.ScriptRoomDatabase;
 import com.fancystachestudios.smarteleprompter.room.ScriptSingleton;
 import com.fancystachestudios.smarteleprompter.room.ScriptViewModel;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.util.NumberUtils;
 
 import java.util.Date;
@@ -74,6 +77,9 @@ public class TeleprompterActivity extends AppCompatActivity {
     Timer scrollTimer;
     ValueAnimator smoothScroller;
 
+    @BindView(R.id.adView)
+    AdView mAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +87,10 @@ public class TeleprompterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_teleprompter);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         scriptRoomDatabase = ScriptSingleton.getInstance(this);
 

@@ -86,5 +86,8 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
 
+    <!--AdMob-->
+    <string name="admob_app_id">ca-app-pub-1573276806353273~2543157340</string>
+
 
 </resources>

@@ -35,6 +35,11 @@ allprojects {
             url 'https://maven.fabric.io/public'
         }
 
+        //Admob
+        maven {
+            url "https://maven.google.com"
+        }
+
     }
 }
 
